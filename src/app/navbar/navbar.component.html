@@ -1,18 +1,29 @@
-<nav class="navbar">
+<nav class="navbar navbar-expand-lg bg-body-tertiary">
     <div class="container-fluid">
         <a class="navbar-brand" href="/">United Agencies</a>
 
         <!-- Buttons -->
         <div class="d-flex">
-            <!-- External Website Button -->
-            <button (click)="openExternalWebsite()" class="external-button">
+            <!-- External location Button -->
+            <button (click)="openExternalWebsiteLocation()" class="loc-button">
                 <fa-icon style="font-size: 16px;" [icon]="faLocationDot"></fa-icon>
+            </button>
+
+            <!--External github link -->
+            <button (click)="openExternalWebsiteYouTube()" class="yt-button">
+                <fa-icon style="font-size: 16px;" [icon]="faYoutube"></fa-icon>
+            </button>
+            
+            <!-- External Youtube link -->
+            <button (click)="openExternalWebsiteGitHub()" class="git-button">
+                <fa-icon style="font-size: 16px;" [icon]="faGithub"></fa-icon>
             </button>
 
             <!-- Theme Toggle Button -->
             <button (click)="toggleTheme()" class="toggle-button" [ngClass]="{ 'dark-mode': isDarkMode }">
                 <fa-icon style="font-size: 16px;" [icon]="isDarkMode ? faMoon : faSun"></fa-icon>
             </button>
+
         </div>
     </div>
 </nav>

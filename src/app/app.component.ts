@@ -1,86 +1,59 @@
-import { AfterViewInit, Component, Inject } from '@angular/core';
+import { AfterViewInit, Component, ElementRef, Inject, ViewChild } from '@angular/core';
 import { isPlatformBrowser } from '@angular/common';
 import { PLATFORM_ID } from '@angular/core';
-import { CommonModule } from '@angular/common';
-import { RouterOutlet } from '@angular/router';
+import { Router, RouterOutlet } from '@angular/router';
 import { NavbarComponent } from './navbar/navbar.component';
-import { FontAwesomeModule } from '@fortawesome/angular-fontawesome';
+import { AppRoutingModule } from './app.routes';
+import { ImagesComponent } from './images/images.component';
+import { StorageService } from './_services/storage.service';
+import { AuthService } from './_services/auth.service';
+import { HttpClientModule } from '@angular/common/http';
+//import { MouseEvent } from '@angular/core';
+
 
 @Component({
-    selector: 'app-root',
-    standalone: true,
-    templateUrl: './app.component.html',
-    styleUrls: ['./app.component.css'],
-    imports: [NavbarComponent]
+  selector: 'app-root',
+  standalone: true,
+  imports: [RouterOutlet,HttpClientModule],
+  templateUrl: './app.component.html',
+  styleUrls: ['./app.component.css'],
+  
 })
-export class AppComponent implements AfterViewInit {
-themeService: any;
-//library: any.add(faSun: any);
-  constructor(@Inject(PLATFORM_ID) private platformId: Object) {}
+export class AppComponent {
 
-  ngAfterViewInit(): void {
-    if (isPlatformBrowser(this.platformId)) {
-      // Your client-side code that uses the document object
-      const track = document.getElementById("image-track") as HTMLElement & { dataset: any };
-      const handleOnDown = (e: MouseEvent | TouchEvent) => {
-        const clientX = e instanceof MouseEvent ? e.clientX : e.touches[0].clientX;
-        track.dataset.mouseDownAt = clientX.toString();
-      };
+  private roles: string[] = [];
+  isLoggedIn = false;
+  showAdminBoard = false;
+  showModeratorBoard = false;
+  username?: string;
 
-      const handleOnUp = () => {
-        track.dataset.mouseDownAt = "0";
-        track.dataset.prevPercentage = track.dataset.percentage;
-      };
+  constructor(private storageService: StorageService, private authService: AuthService) { }
 
-      const handleOnMove = (e: MouseEvent | TouchEvent) => {
-        if (track.dataset.mouseDownAt === "0") return;
+  ngOnInit(): void {
+    this.isLoggedIn = this.storageService.isLoggedIn();
 
-        const clientX = e instanceof MouseEvent ? e.clientX : e.touches[0].clientX;
-        const mouseDelta = parseFloat(track.dataset.mouseDownAt) - clientX;
-        const maxDelta = window.innerWidth / 2;
+    if (this.isLoggedIn) {
+      const user = this.storageService.getUser();
+      this.roles = user.roles;
 
-        const percentage = (mouseDelta / maxDelta) * -100;
-        const nextPercentageUnconstrained = parseFloat(track.dataset.prevPercentage) + percentage;
-        const nextPercentage = Math.max(Math.min(nextPercentageUnconstrained, 0), -100);
+      this.showAdminBoard = this.roles.includes('ROLE_ADMIN');
+      this.showModeratorBoard = this.roles.includes('ROLE_MODERATOR');
 
-        track.dataset.percentage = nextPercentage;
-
-        (track as HTMLElement).animate(
-          [
-            {
-              transform: `translate(${nextPercentage}%, -50%)`
-            }
-          ],
-          { duration: 1200, fill: "forwards" }
-        );
-
-        const imageArray = Array.from(track.getElementsByClassName("image") as HTMLCollectionOf<HTMLElement>);
-
-        for (const image of imageArray) {
-          image.animate(
-            [
-              {
-                objectPosition: `${100 + nextPercentage}% center`
-              }
-            ],
-            { duration: 1200, fill: "forwards" }
-          );
-        }
-      };
-
-      /* -- Had to add extra lines for touch events -- */
-
-      window.onmousedown = e => handleOnDown(e);
-
-      window.ontouchstart = e => handleOnDown(e);
-
-      window.onmouseup = () => handleOnUp();
-
-      window.ontouchend = () => handleOnUp();
-
-      window.onmousemove = e => handleOnMove(e);
-
-      window.ontouchmove = e => handleOnMove(e);
+      this.username = user.username;
     }
+  }
+
+  logout(): void {
+    this.authService.logout().subscribe({
+      next: res => {
+        console.log(res);
+        this.storageService.clean();
+
+        window.location.reload();
+      },
+      error: err => {
+        console.log(err);
+      }
+    });
   }
 }

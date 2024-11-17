@@ -3,7 +3,7 @@
     color: #333;
 } */
 
-.toggle-button,.external-button,.navbar{
+.toggle-button,.loc-button,.git-button,.yt-button{
     background-color: #eee;
     color: #333;
     border: none;
@@ -13,6 +13,17 @@
     transition: background-color 0.3s ease;
 }
 
+.loc-button:hover, .fa-icon {
+    color: #1b8600;
+}
+
+.yt-button:hover, .fa-icon {
+    color: #f80505;
+}
+
+.git-button:hover, .fa-icon {
+    color: #081cfb;
+}
 
 .dark-mode {
     background-color: #333;

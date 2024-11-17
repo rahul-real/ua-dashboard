@@ -1,0 +1,20 @@
+.login-form-container {
+    margin-right: 250px;
+    margin-bottom: 300px;
+    
+}
+
+.text-on-right{
+    margin-right: 100px;
+    margin-bottom: 350px;
+}
+
+.main-div{
+    margin-bottom: 300px;
+    margin-left: 300px;
+}
+.wl{
+    font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+    font-size: 85px;
+    color: rgb(82, 122, 255);
+}
